@@ -9,7 +9,7 @@ import {
   Dimensions,
 } from 'react-native';
 
-import Animation from 'lottie-react-native';
+// import Animation from 'lottie-react-native';
 
 class AnimatedPullToRefresh extends React.Component {
   constructor(props) {
@@ -185,7 +185,6 @@ class AnimatedPullToRefresh extends React.Component {
     });
   }
 
-
   onScrollRelease() {
     if (!this.props.isRefreshing) {
       this.props.onRefresh();
@@ -200,7 +199,7 @@ class AnimatedPullToRefresh extends React.Component {
 
   render() {
     const onScrollEvent = event => {
-      this.state.scrollY.setValue(event.nativeEvent.contentOffset.y);
+      this.state.scrollY.setValue(event.nativeEvent.contentOffset.x);
     };
 
     const animateHeight = this.state.refreshHeight.interpolate({
@@ -221,21 +220,26 @@ class AnimatedPullToRefresh extends React.Component {
       right: 0,
       left: 0,
       backgroundColor: this.props.animationBackgroundColor,
-      width: Dimensions.get('window').width,
-      height: this.props.pullHeight,
+      // width: Dimensions.get('window').width,
+      // height: this.props.pullHeight
+      width: this.props.pullHeight,
+      height: Dimensions.get('window').height,
     };
 
     return (
       <View
-        style={{flex: 1, backgroundColor: this.props.animationBackgroundColor}}
+        style={{
+          flex: 1,
+          backgroundColor: this.props.animationBackgroundColor,
+        }}
         {...this._panResponder.panHandlers}
-        >
-        <Animation
+      >
+        <Animated.View
           style={[animationStyle, {opacity: this.props.isRefreshing ? 0 : 1}]}
-          source={this.props.onPullAnimationSrc}
-          progress={animateProgress}
+          // source={this.props.onPullAnimationSrc}
+          // progress={animateProgress}
         />
-        <Animation
+        <Animated.View
           style={[
             animationStyle,
             {
@@ -243,12 +247,12 @@ class AnimatedPullToRefresh extends React.Component {
                 this.props.isRefreshing && !this.state.isRefreshAnimationStarted
                   ? 1
                   : 0,
-            },
+            }
           ]}
-          source={this.props.onStartRefreshAnimationSrc}
-          progress={this.state.initAnimationProgress}
+          // source={this.props.onStartRefreshAnimationSrc}
+          // progress={this.state.initAnimationProgress}
         />
-        <Animation
+        <Animated.View
           style={[
             animationStyle,
             {
@@ -257,22 +261,22 @@ class AnimatedPullToRefresh extends React.Component {
                 !this.state.isRefreshAnimationEnded
                   ? 1
                   : 0,
-            },
+            }
           ]}
-          source={this.props.onRefreshAnimationSrc}
-          progress={this.state.repeatAnimationProgress}
+          // source={this.props.onRefreshAnimationSrc}
+          // progress={this.state.repeatAnimationProgress}
         />
-        <Animation
+        <Animated.View
           style={[
             animationStyle,
-            {opacity: this.state.isRefreshAnimationEnded ? 1 : 0},
+            {opacity: this.state.isRefreshAnimationEnded ? 1 : 0}
           ]}
-          source={this.props.onEndRefreshAnimationSrc}
-          progress={this.state.finalAnimationProgress}
+          // source={this.props.onEndRefreshAnimationSrc}
+          // progress={this.state.finalAnimationProgress}
         />
 
         <ScrollView
-                    ref="scrollComponentRef"
+          ref="scrollComponentRef"
           scrollEnabled={this.state.isScrollFree}
           onScroll={onScrollEvent}
           onTouchEnd={() => {
@@ -280,8 +284,10 @@ class AnimatedPullToRefresh extends React.Component {
           }}
           onScrollEndDrag={() => {
             this.isScrolledToTop();
-          }}>
-          <Animated.View style={{marginTop: animateHeight}}>
+          }}
+          horizontal
+        >
+          <Animated.View style={{marginRight: animateHeight}}>
             {React.cloneElement(this.props.contentView, {
               scrollEnabled: false,
               ref: 'scrollComponentRef',
